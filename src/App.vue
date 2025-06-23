@@ -3,35 +3,17 @@ import { useI18n } from "vue-i18n";
 import GameBoard from "@/components/GameBoard/GameBoard.vue";
 import GameControls from "@/components/GameControls/GameControls.vue";
 import GameHistory from "@/components/GameHistory/GameHistory.vue";
+import LanguageSwitcher from "@/components/LanguageSwitcher/LanguageSwitcher.vue";
 import "./App.css";
 
-const { t, locale } = useI18n();
-
-const setLanguage = (lang: string) => {
-  locale.value = lang;
-};
+const { t } = useI18n();
 </script>
 
 <template>
   <div class="app-container">
     <header>
       <h1>{{ t("gameTitle") }}</h1>
-      <div class="language-switcher">
-        <button
-          @click="setLanguage('en')"
-          class="language-button"
-          :class="{ active: locale === 'en' }"
-        >
-          EN
-        </button>
-        <button
-          @click="setLanguage('pl')"
-          class="language-button"
-          :class="{ active: locale === 'pl' }"
-        >
-          PL
-        </button>
-      </div>
+      <LanguageSwitcher />
     </header>
 
     <main>

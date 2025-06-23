@@ -38,35 +38,6 @@ footer {
   border-top: 1px solid #e2e8f0;
 }
 
-.language-switcher {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-}
-
-.language-button {
-  padding: 0.5rem 1rem;
-  background-color: #f0f2f5;
-  color: black;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s ease;
-}
-
-.language-button:hover {
-  background-color: #444;
-  color: white;
-}
-
-.language-button.active {
-  background-color: #666;
-  color: white;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-  transform: scale(1.05);
-}
-
 @media (max-width: 768px) {
   .app-container {
     padding: 10px;
