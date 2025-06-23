@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import type {Card, Difficulty, GameState, Rarity} from "@/types";
 
 export const useGameStore = defineStore('game', () => {
@@ -46,6 +46,9 @@ export const useGameStore = defineStore('game', () => {
     rare: { startColor: '#8847ff', endColor: '#b24bff' },
     legendary: { startColor: '#d32ce6', endColor: '#ffbe40' }
   }
+
+  // Computed properties
+  const isGameOver = computed(() => matchedCards.value.length === cards.value.length && cards.value.length > 0)
 
   // Generate pseudorandom number based on seed
   function seededRandom(seed: string) {
@@ -182,5 +185,5 @@ export const useGameStore = defineStore('game', () => {
     endTime.value = null
     moveCount.value = 0
   }
-  return {difficulty, gameState, initGame, resetGame, moveCount, seed, cards, matchedCards, flippedCards, rarityGradients, flipCard}
+  return {difficulty, gameState, initGame, resetGame, moveCount, seed, cards, matchedCards, flippedCards, rarityGradients, flipCard, isGameOver}
 })

@@ -24,9 +24,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
+import { useSoundEffects } from '@/services/soundService'
 import CanvasCard from '@/components/CanvasCard.vue'
 
 const gameStore = useGameStore()
+const { playSound } = useSoundEffects()
 
 const cards = computed(() => gameStore.cards)
 const rowsCount = computed(() => {
@@ -61,12 +63,34 @@ const isCardMatched = (index: number) => {
 
 // Flip a card and play sound
 const flipCard = (index: number) => {
+  // Always play flip sound first for any attempted card flip
+  // This ensures the sound plays immediately and isn't dependent on the game logic
+  playSound('flip')
 
   // Store the current number of flipped cards before flipping
   const flippedCountBefore = gameStore.flippedCards.length
 
   // Try to flip the card
   const cardWasFlipped = gameStore.flipCard(index)
+
+  // If card was flipped and it was the second card
+  if (cardWasFlipped && flippedCountBefore === 1) {
+    // We now have two cards flipped, check for match after a short delay
+    setTimeout(() => {
+      // Check if the cards matched (flippedCards will be empty if they matched)
+      if (gameStore.flippedCards.length === 0 && gameStore.matchedCards.length >= 2) {
+        // Cards matched
+        playSound('match')
+
+        // Check for game over and play win sound
+        if (gameStore.isGameOver) {
+          setTimeout(() => {
+            playSound('win')
+          }, 500)
+        }
+      }
+    }, 300)
+  }
 }
 </script>
 
