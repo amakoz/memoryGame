@@ -1,17 +1,17 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import GameControls from "../../components/GameControls/GameControls.vue";
+import GameControls from "@/components/GameControls/GameControls.vue";
 
 // Mock the store and service modules
 vi.mock("@/stores/gameStore", () => ({
   useGameStore: vi.fn(),
 }));
-vi.mock("../../services/soundService", () => ({
+vi.mock("@/services/soundService", () => ({
   useSoundEffects: vi.fn(),
 }));
 
-import { useGameStore } from "../../stores/gameStore";
-import { useSoundEffects } from "../../services/soundService";
+import { useGameStore } from "@/stores/gameStore";
+import { useSoundEffects } from "@/services/soundService";
 
 describe("GameControls.vue", () => {
   let gameStoreMock: any;
