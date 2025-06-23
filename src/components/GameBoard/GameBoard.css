@@ -10,8 +10,21 @@
 .game-board {
   display: grid;
   gap: 16px;
-  max-width: 1100px;
   width: 100%;
+  justify-items: center;
+}
+
+/* Difficulty-specific width adjustments */
+.game-board.difficulty-easy {
+  max-width: 700px;
+}
+
+.game-board.difficulty-medium {
+  max-width: 1100px;
+}
+
+.game-board.difficulty-hard {
+  max-width: 1100px;
 }
 
 /* Responsive layout adjustments */

@@ -2,6 +2,7 @@
   <div class="game-board-wrapper">
     <div
       class="game-board"
+      :class="`difficulty-${gameStore.difficulty}`"
       :style="{
         gridTemplateColumns: `repeat(${columnsCount}, 1fr)`,
         gridTemplateRows: `repeat(${rowsCount}, 1fr)`,

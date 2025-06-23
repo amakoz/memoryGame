@@ -25,7 +25,7 @@ export const useGameStore = defineStore("game", () => {
   // Game settings based on difficulty
   const difficultySettings = {
     easy: { rows: 4, cols: 4 },
-    medium: { rows: 6, cols: 4 },
+    medium: { rows: 4, cols: 6 },
     hard: { rows: 6, cols: 6 },
   };
 
@@ -33,7 +33,7 @@ export const useGameStore = defineStore("game", () => {
   const items: { id: number; name: string; rarity: Rarity; image: string }[] = [
     { id: 1, name: "AK-47", rarity: "common", image: "/images/ak47.png" },
     { id: 2, name: "M4A4", rarity: "common", image: "/images/m4a4.png" },
-    { id: 3, name: "AWP", rarity: "rare", image: "/images/awp.png" },
+    { id: 3, name: "AWP", rarity: "legendary", image: "/images/awp.png" },
     {
       id: 4,
       name: "Desert Eagle",
@@ -60,6 +60,24 @@ export const useGameStore = defineStore("game", () => {
       name: "Five Seven",
       rarity: "uncommon",
       image: "/images/five-seven.png",
+    },
+    {
+      id: 16,
+      name: "CZ75A",
+      rarity: "uncommon",
+      image: "/images/cz75a.png",
+    },
+    {
+      id: 17,
+      name: "MAC-10",
+      rarity: "legendary",
+      image: "/images/mac-10.png",
+    },
+    {
+      id: 18,
+      name: "G3SG1",
+      rarity: "rare",
+      image: "/images/g3sg1.png",
     },
   ];
 
