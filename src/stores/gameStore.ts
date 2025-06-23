@@ -118,5 +118,5 @@ export const useGameStore = defineStore('game', () => {
     endTime.value = null
     moveCount.value = 0
   }
-  return {difficulty, gameState, initGame, resetGame}
+  return {difficulty, gameState, initGame, resetGame, moveCount, seed}
 })

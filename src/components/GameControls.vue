@@ -43,6 +43,24 @@
         </button>
       </div>
     </div>
+
+    <div v-if="isPlaying || isCompleted" class="control-section">
+      <h2>Game Statistics</h2>
+      <div class="stats-container">
+        <div class="stat-item">
+          <span class="stat-label">Moves:</span>
+          <span class="stat-value">{{ moveCount }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Time:</span>
+          <span class="stat-value">{{ formattedTime }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Seed:</span>
+          <span class="stat-value">{{ currentSeed }}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -59,6 +77,20 @@ const seedInput = ref('')
 
 // Get state from store
 const isPlaying = computed(() => gameStore.gameState === 'playing')
+const isCompleted = computed(() => gameStore.gameState === 'completed')
+const moveCount = computed(() => gameStore.moveCount)
+const currentSeed = computed(() => gameStore.seed)
+
+// Timer for game time display
+let timerInterval: number | null = null
+const elapsedTime = ref(0)
+
+// Format time for display
+const formattedTime = computed(() => {
+  const minutes = Math.floor(elapsedTime.value / 60)
+  const seconds = elapsedTime.value % 60
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+})
 
 // Generate a random seed
 const generateRandomSeed = () => {
