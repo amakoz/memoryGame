@@ -342,7 +342,9 @@ export const useGameStore = defineStore("game", () => {
     initGame,
     startGame,
     flipCard,
+    endGame,
     resetGame,
     loadGameState,
+    clearGameState,
   };
 });
