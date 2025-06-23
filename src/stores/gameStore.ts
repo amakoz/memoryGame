@@ -40,6 +40,13 @@ export const useGameStore = defineStore('game', () => {
     { id: 15, name: 'Five Seven', rarity: 'uncommon', image: '/images/five-seven.png' },
   ]
 
+  const rarityGradients = {
+    common: { startColor: '#c0c0c0', endColor: '#e6e6e6' },
+    uncommon: { startColor: '#4b69ff', endColor: '#5e98d9' },
+    rare: { startColor: '#8847ff', endColor: '#b24bff' },
+    legendary: { startColor: '#d32ce6', endColor: '#ffbe40' }
+  }
+
   // Generate pseudorandom number based on seed
   function seededRandom(seed: string) {
     let hash = 0
@@ -108,6 +115,63 @@ export const useGameStore = defineStore('game', () => {
     cards.value = finalCards
   }
 
+  // Flip a card
+  function flipCard(cardIndex: number) {
+    // Don't allow flipping if already flipped or matched
+    if (
+        flippedCards.value.includes(cardIndex) ||
+        matchedCards.value.includes(cardIndex) ||
+        flippedCards.value.length >= 2 ||
+        gameState.value !== 'playing'
+    ) {
+      return false
+    }
+
+    flippedCards.value.push(cardIndex)
+
+    // Start the game on first flip
+    if (startTime.value === null) {
+      startTime.value = Date.now()
+      gameState.value = 'playing'
+    }
+
+    // Check for match if we have 2 flipped cards
+    if (flippedCards.value.length === 2) {
+      moveCount.value++
+
+      const card1 = cards.value[flippedCards.value[0]]
+      const card2 = cards.value[flippedCards.value[1]]
+
+      // Check if we have a match (cards have the same base item id)
+      if (card1.id.split('-')[0] === card2.id.split('-')[0]) {
+        matchedCards.value.push(...flippedCards.value)
+        flippedCards.value = []
+
+        // Check if game is over
+        if (matchedCards.value.length === cards.value.length) {
+          endGame()
+        }
+        return true
+      } else {
+        // No match, schedule reset of flipped cards
+        setTimeout(() => {
+          flippedCards.value = []
+        }, 1000)
+        return false
+      }
+    }
+
+    return true
+  }
+
+  // End the game and save to history
+  function endGame() {
+    if (gameState.value === 'playing') {
+      endTime.value = Date.now()
+      gameState.value = 'completed'
+    }
+  }
+
   // Reset game
   function resetGame() {
     cards.value = []
@@ -118,5 +182,5 @@ export const useGameStore = defineStore('game', () => {
     endTime.value = null
     moveCount.value = 0
   }
-  return {difficulty, gameState, initGame, resetGame, moveCount, seed}
+  return {difficulty, gameState, initGame, resetGame, moveCount, seed, cards, matchedCards, flippedCards, rarityGradients, flipCard}
 })

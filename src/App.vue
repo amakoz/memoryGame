@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import GameControls from '@/components/GameControls.vue'
+import GameBoard from "@/components/GameBoard.vue";
 </script>
 
 <template>
@@ -10,6 +11,7 @@ import GameControls from '@/components/GameControls.vue'
 
     <main>
       <GameControls />
+      <GameBoard />
     </main>
 
     <footer>
