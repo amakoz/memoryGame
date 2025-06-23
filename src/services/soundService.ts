@@ -1,6 +1,13 @@
 import { ref } from "vue";
 import type { AudioFiles } from "@/types";
 
+// Sound-related type definitions
+type SoundType = keyof AudioFiles;
+
+interface SoundStateDetail {
+  muted: boolean;
+}
+
 // Create a single instance of the sound service to be shared
 let serviceInstance: ReturnType<typeof createSoundService> | null = null;
 
@@ -63,10 +70,10 @@ function createSoundService() {
     return loadingPromise.value;
   };
 
-  // Play a sound effect with error handling
-  const playSound = (sound: keyof AudioFiles) => {
+  // Play a sound effect with improved error handling
+  const playSound = (sound: SoundType): Promise<void> => {
     if (isMuted.value) {
-      return;
+      return Promise.resolve();
     }
 
     if (!isLoaded.value) {
@@ -78,20 +85,17 @@ function createSoundService() {
       soundElement.currentTime = 0;
 
       // Use the play promise to catch errors
-      const playPromise = soundElement.play();
-
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.error(`Error playing ${sound} sound:`, error);
-        });
-      }
+      return soundElement.play().catch((error: Error) => {
+        console.error(`Error playing ${sound} sound:`, error);
+      });
     } catch (error) {
       console.error(`Error playing ${sound} sound:`, error);
+      return Promise.reject(error);
     }
   };
 
-  // Toggle mute
-  const toggleMute = () => {
+  // Toggle mute with improved event handling
+  const toggleMute = (): void => {
     isMuted.value = !isMuted.value;
 
     // Play a test sound when unmuting to confirm
@@ -105,18 +109,29 @@ function createSoundService() {
       }, 100);
     }
 
-    localStorage.setItem("memoryGameMuted", isMuted.value.toString());
+    // Persist mute preference
+    saveMutePreference();
 
-    // Force a UI update by dispatching a custom event
+    // Notify UI about state change
+    notifySoundStateChange();
+  };
+
+  // Save mute preference to local storage
+  const saveMutePreference = (): void => {
+    localStorage.setItem("memoryGameMuted", isMuted.value.toString());
+  };
+
+  // Dispatch event to notify UI about sound state changes
+  const notifySoundStateChange = (): void => {
     document.dispatchEvent(
-      new CustomEvent("sound-state-changed", {
+      new CustomEvent<SoundStateDetail>("sound-state-changed", {
         detail: { muted: isMuted.value },
       }),
     );
   };
 
   // Load mute preference from local storage
-  const loadMutePreference = () => {
+  const loadMutePreference = (): void => {
     const savedMute = localStorage.getItem("memoryGameMuted");
     if (savedMute !== null) {
       isMuted.value = savedMute === "true";

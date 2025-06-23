@@ -6,6 +6,7 @@ import type {
   GameState,
   HistoryEntry,
   Rarity,
+  RarityGradients,
 } from "@/types";
 
 export const useGameStore = defineStore("game", () => {
@@ -62,7 +63,7 @@ export const useGameStore = defineStore("game", () => {
     },
   ];
 
-  const rarityGradients = {
+  const rarityGradients: RarityGradients = {
     common: { startColor: "#c0c0c0", endColor: "#e6e6e6" },
     uncommon: { startColor: "#4b69ff", endColor: "#5e98d9" },
     rare: { startColor: "#8847ff", endColor: "#b24bff" },
@@ -338,6 +339,7 @@ export const useGameStore = defineStore("game", () => {
     endTime,
     moveCount,
     history,
+    difficultySettings,
 
     // Computed
     isGameOver,

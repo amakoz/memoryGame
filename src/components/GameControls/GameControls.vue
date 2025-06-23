@@ -75,6 +75,15 @@ import { useI18n } from "vue-i18n";
 import type { Difficulty } from "@/types";
 import "./GameControls.css";
 
+// Custom event types
+interface SoundStateEvent extends Event {
+  detail?: { muted: boolean };
+}
+
+interface GameReplayedEvent extends Event {
+  detail?: { seed: string; difficulty: Difficulty };
+}
+
 const { t } = useI18n();
 const gameStore = useGameStore();
 const soundService = useSoundEffects();
@@ -93,7 +102,7 @@ const moveCount = computed(() => gameStore.moveCount);
 const currentSeed = computed(() => gameStore.seed);
 
 // Timer for game time display
-let timerInterval: number | null = null;
+let timerInterval: ReturnType<typeof setInterval> | null = null;
 const elapsedTime = ref(0);
 
 // Format time for display
@@ -113,12 +122,6 @@ const startNewGame = () => {
   gameStore.initGame(selectedDifficulty.value, seedInput.value);
   gameStore.startGame();
   startTimer();
-
-  // Load continuation game if it exists
-  if (!gameStore.loadGameState()) {
-    gameStore.initGame(selectedDifficulty.value, seedInput.value);
-    gameStore.startGame();
-  }
 };
 
 // Reset the current game
@@ -142,7 +145,7 @@ const startTimer = () => {
 
   const startTime = gameStore.startTime || Date.now();
 
-  timerInterval = window.setInterval(() => {
+  timerInterval = setInterval(() => {
     if (gameStore.gameState === "playing") {
       elapsedTime.value = Math.floor((Date.now() - startTime) / 1000);
     } else if (gameStore.gameState === "completed") {
@@ -160,8 +163,25 @@ const stopTimer = () => {
 };
 
 // Listen for sound state changes
-const updateSoundState = () => {
-  soundMuted.value = soundService.isMuted.value;
+const updateSoundState = (event: SoundStateEvent) => {
+  if (event.detail) {
+    soundMuted.value = event.detail.muted;
+  } else {
+    soundMuted.value = soundService.isMuted.value;
+  }
+};
+
+// Handle game replay events
+const handleGameReplayed = (event: GameReplayedEvent) => {
+  console.log("Game replayed event received, starting timer");
+
+  // Update difficulty if provided in the event detail
+  if (event.detail?.difficulty) {
+    selectedDifficulty.value = event.detail.difficulty;
+  }
+
+  elapsedTime.value = 0; // Reset elapsed time
+  startTimer();
 };
 
 // Lifecycle hooks
@@ -174,14 +194,16 @@ onMounted(() => {
   soundMuted.value = soundService.isMuted.value;
 
   // Listen to custom sound state change events
-  document.addEventListener("sound-state-changed", updateSoundState);
+  document.addEventListener(
+    "sound-state-changed",
+    updateSoundState as EventListener,
+  );
 
   // Listen for game replayed events from GameHistory component
-  document.addEventListener("game-replayed", () => {
-    console.log("Game replayed event received, starting timer");
-    elapsedTime.value = 0; // Reset elapsed time
-    startTimer();
-  });
+  document.addEventListener(
+    "game-replayed",
+    handleGameReplayed as EventListener,
+  );
 
   // Try to load saved game
   if (gameStore.loadGameState() && gameStore.gameState === "playing") {
@@ -192,7 +214,13 @@ onMounted(() => {
 
 onUnmounted(() => {
   stopTimer();
-  document.removeEventListener("sound-state-changed", updateSoundState);
-  document.removeEventListener("game-replayed", () => {});
+  document.removeEventListener(
+    "sound-state-changed",
+    updateSoundState as EventListener,
+  );
+  document.removeEventListener(
+    "game-replayed",
+    handleGameReplayed as EventListener,
+  );
 });
 </script>

@@ -32,30 +32,16 @@ const gameStore = useGameStore();
 const { playSound } = useSoundEffects();
 
 const cards = computed(() => gameStore.cards);
+
+// Get rows and columns directly from the store's difficultySettings
 const rowsCount = computed(() => {
-  switch (gameStore.difficulty) {
-    case "easy":
-      return 4;
-    case "medium":
-      return 4;
-    case "hard":
-      return 6;
-    default:
-      return 4;
-  }
+  const settings = gameStore.difficultySettings[gameStore.difficulty];
+  return settings?.rows || 4;
 });
 
 const columnsCount = computed(() => {
-  switch (gameStore.difficulty) {
-    case "easy":
-      return 4;
-    case "medium":
-      return 6;
-    case "hard":
-      return 6;
-    default:
-      return 4;
-  }
+  const settings = gameStore.difficultySettings[gameStore.difficulty];
+  return settings?.cols || 4;
 });
 
 const rarityGradients = computed(() => gameStore.rarityGradients);

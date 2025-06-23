@@ -28,3 +28,10 @@ export interface AudioFiles {
   match: HTMLAudioElement;
   win: HTMLAudioElement;
 }
+
+export interface RarityGradient {
+  startColor: string;
+  endColor: string;
+}
+
+export type RarityGradients = Record<Rarity, RarityGradient>;
