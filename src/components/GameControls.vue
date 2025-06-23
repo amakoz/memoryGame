@@ -25,6 +25,23 @@
           Generate
         </button>
       </div>
+
+      <div class="button-group">
+        <button
+            v-if="!isPlaying"
+            @click="startNewGame"
+            class="primary-button"
+        >
+          New Game
+        </button>
+        <button
+            v-else
+            @click="resetGame"
+            class="warning-button"
+        >
+          Restart
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -46,6 +63,16 @@ const isPlaying = computed(() => gameStore.gameState === 'playing')
 // Generate a random seed
 const generateRandomSeed = () => {
   seedInput.value = Math.random().toString(36).substring(2, 8)
+}
+
+// Start a new game with current settings
+const startNewGame = () => {
+  gameStore.initGame(selectedDifficulty.value, seedInput.value)
+}
+
+// Reset the current game
+const resetGame = () => {
+  gameStore.resetGame()
 }
 </script>
 
