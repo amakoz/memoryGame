@@ -1,0 +1,33 @@
+.game-board-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+.game-board {
+  display: grid;
+  gap: 16px;
+  max-width: 1100px;
+  width: 100%;
+}
+
+/* Responsive layout adjustments */
+@media (max-width: 1200px) {
+  .game-board {
+    max-width: 95%;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-board-wrapper {
+    padding: 10px;
+  }
+
+  .game-board {
+    gap: 8px;
+  }
+}

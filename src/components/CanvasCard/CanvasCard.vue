@@ -13,6 +13,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import type { Card } from "@/types";
+import "./CanvasCard.css";
 
 const props = defineProps<{
   card: Card;
@@ -303,26 +304,3 @@ onMounted(() => {
   };
 });
 </script>
-
-<style scoped>
-.card-canvas {
-  cursor: pointer;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.card-canvas:hover {
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-}
-
-.card-canvas.flipped {
-  transform: rotateY(180deg);
-}
-
-.card-canvas.matched {
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-}
-</style>
