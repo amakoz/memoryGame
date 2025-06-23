@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia'
+import {ref} from "vue";
+import type {Difficulty} from "@/types";
 
 export const useGameStore = defineStore('game', () => {
-
-  return {}
+  // Game state
+  const difficulty = ref<Difficulty>('easy')
+  return {difficulty}
 })
