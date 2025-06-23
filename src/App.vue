@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import GameControls from '@/components/GameControls.vue'
 </script>
 
 <template>
@@ -7,7 +8,9 @@
       <h1>CS2 Memory Game</h1>
     </header>
 
-    <main>Memory</main>
+    <main>
+      <GameControls />
+    </main>
 
     <footer>
       <p>&copy; {{ new Date().getFullYear() }} CS2 Memory Game</p>
