@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
+import { setupI18nMock } from "../test-utils";
+
+// Set up i18n mocks before importing components that use i18n
+setupI18nMock();
+
 import GameHistory from "@/components/GameHistory/GameHistory.vue";
 import type { HistoryEntry } from "@/types";
 
