@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import GameControls from '@/components/GameControls.vue'
 import GameBoard from "@/components/GameBoard.vue";
+import GameControls from "@/components/GameControls.vue";
+import GameHistory from "@/components/GameHistory.vue";
 </script>
 
 <template>
@@ -12,6 +13,7 @@ import GameBoard from "@/components/GameBoard.vue";
     <main>
       <GameControls />
       <GameBoard />
+      <GameHistory />
     </main>
 
     <footer>
@@ -28,7 +30,7 @@ import GameBoard from "@/components/GameBoard.vue";
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   color: #333;
   background-color: #f0f2f5;

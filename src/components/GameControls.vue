@@ -11,35 +11,38 @@
         </select>
       </div>
 
-
       <div class="settings-group">
         <label for="seed">Seed (optional):</label>
         <input
-            id="seed"
-            type="text"
-            v-model="seedInput"
-            placeholder="Leave empty for random"
-            :disabled="isPlaying"
+          id="seed"
+          type="text"
+          v-model="seedInput"
+          placeholder="Leave empty for random"
+          :disabled="isPlaying"
+        />
+        <button
+          @click="generateRandomSeed"
+          :disabled="isPlaying"
+          class="secondary-button"
         >
-        <button @click="generateRandomSeed" :disabled="isPlaying" class="secondary-button">
           Generate
         </button>
       </div>
 
       <div class="button-group">
-        <button
-            v-if="!isPlaying"
-            @click="startNewGame"
-            class="primary-button"
-        >
+        <button v-if="!isPlaying" @click="startNewGame" class="primary-button">
           New Game
         </button>
-        <button
-            v-else
-            @click="resetGame"
-            class="warning-button"
-        >
+        <button v-else @click="resetGame" class="warning-button">
           Restart
+        </button>
+        <button
+          @click="toggleSound"
+          class="secondary-button sound-button"
+          :class="{ 'sound-muted': soundMuted }"
+        >
+          <span class="sound-icon">{{ soundMuted ? "🔇" : "🔊" }}</span>
+          <span>Sound: {{ soundMuted ? "OFF" : "ON" }}</span>
         </button>
       </div>
     </div>
@@ -65,48 +68,277 @@
 </template>
 
 <script setup lang="ts">
-import {useGameStore} from "@/stores/gameStore.ts";
-import {computed, ref} from "vue";
-import type {Difficulty} from "@/types";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useGameStore } from "@/stores/gameStore";
+import { useSoundEffects } from "@/services/soundService";
+import type { Difficulty } from "@/types";
 
-const gameStore = useGameStore()
+const gameStore = useGameStore();
+const soundService = useSoundEffects();
 
 // Game settings
-const selectedDifficulty = ref<Difficulty>('easy')
-const seedInput = ref('')
+const selectedDifficulty = ref<Difficulty>("easy");
+const seedInput = ref("");
+
+// Create a local reactive state for sound muted status
+const soundMuted = ref(soundService.isMuted.value);
 
 // Get state from store
-const isPlaying = computed(() => gameStore.gameState === 'playing')
-const isCompleted = computed(() => gameStore.gameState === 'completed')
-const moveCount = computed(() => gameStore.moveCount)
-const currentSeed = computed(() => gameStore.seed)
+const isPlaying = computed(() => gameStore.gameState === "playing");
+const isCompleted = computed(() => gameStore.gameState === "completed");
+const moveCount = computed(() => gameStore.moveCount);
+const currentSeed = computed(() => gameStore.seed);
 
 // Timer for game time display
-let timerInterval: number | null = null
-const elapsedTime = ref(0)
+let timerInterval: number | null = null;
+const elapsedTime = ref(0);
 
 // Format time for display
 const formattedTime = computed(() => {
-  const minutes = Math.floor(elapsedTime.value / 60)
-  const seconds = elapsedTime.value % 60
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-})
+  const minutes = Math.floor(elapsedTime.value / 60);
+  const seconds = elapsedTime.value % 60;
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+});
 
 // Generate a random seed
 const generateRandomSeed = () => {
-  seedInput.value = Math.random().toString(36).substring(2, 8)
-}
+  seedInput.value = Math.random().toString(36).substring(2, 8);
+};
 
 // Start a new game with current settings
 const startNewGame = () => {
-  gameStore.initGame(selectedDifficulty.value, seedInput.value)
-}
+  gameStore.initGame(selectedDifficulty.value, seedInput.value);
+  gameStore.startGame();
+  startTimer();
+
+  // Load continuation game if it exists
+  if (!gameStore.loadGameState()) {
+    gameStore.initGame(selectedDifficulty.value, seedInput.value);
+    gameStore.startGame();
+  }
+};
 
 // Reset the current game
 const resetGame = () => {
-  gameStore.resetGame()
-}
+  gameStore.resetGame();
+  stopTimer();
+  elapsedTime.value = 0;
+};
+
+// Toggle sound on/off
+const toggleSound = () => {
+  soundService.toggleMute();
+  soundMuted.value = soundService.isMuted.value;
+};
+
+// Start the game timer
+const startTimer = () => {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+
+  const startTime = gameStore.startTime || Date.now();
+
+  timerInterval = window.setInterval(() => {
+    if (gameStore.gameState === "playing") {
+      elapsedTime.value = Math.floor((Date.now() - startTime) / 1000);
+    } else if (gameStore.gameState === "completed") {
+      stopTimer();
+    }
+  }, 1000);
+};
+
+// Stop the timer
+const stopTimer = () => {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+};
+
+// Listen for sound state changes
+const updateSoundState = () => {
+  soundMuted.value = soundService.isMuted.value;
+};
+
+// Lifecycle hooks
+onMounted(() => {
+  // Load sound preferences and preload sounds
+  soundService.loadMutePreference();
+  soundService.preloadSounds();
+
+  // Initialize local sound state
+  soundMuted.value = soundService.isMuted.value;
+
+  // Listen to custom sound state change events
+  document.addEventListener("sound-state-changed", updateSoundState);
+
+  // Try to load saved game
+  if (gameStore.loadGameState() && gameStore.gameState === "playing") {
+    selectedDifficulty.value = gameStore.difficulty;
+    startTimer();
+  }
+});
+
+onUnmounted(() => {
+  stopTimer();
+  document.removeEventListener("sound-state-changed", updateSoundState);
+});
 </script>
 
 <style scoped>
+.game-controls {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.control-section {
+  margin-bottom: 20px;
+}
+
+.control-section:last-child {
+  margin-bottom: 0;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin: 0 0 15px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+.settings-group {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+label {
+  font-weight: 600;
+  min-width: 120px;
+}
+
+select,
+input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  flex-grow: 1;
+  font-size: 16px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary-button {
+  background-color: #4b69ff;
+  color: white;
+}
+
+.primary-button:hover:not(:disabled) {
+  background-color: #3a57e8;
+}
+
+.secondary-button {
+  background-color: #e2e8f0;
+  color: #333;
+}
+
+.secondary-button:hover:not(:disabled) {
+  background-color: #d2d8e0;
+}
+
+.warning-button {
+  background-color: #f56565;
+  color: white;
+}
+
+.warning-button:hover:not(:disabled) {
+  background-color: #e53e3e;
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.stat-item {
+  padding: 10px;
+  background-color: #edf2f7;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.stat-label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 5px;
+  color: #4a5568;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  color: #2d3748;
+}
+
+.sound-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sound-icon {
+  font-size: 1.2rem;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .game-controls {
+    padding: 15px;
+  }
+
+  .settings-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  label {
+    margin-bottom: 5px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+}
 </style>
