@@ -10,19 +10,43 @@
           <option value="hard">Hard (6x6)</option>
         </select>
       </div>
+
+
+      <div class="settings-group">
+        <label for="seed">Seed (optional):</label>
+        <input
+            id="seed"
+            type="text"
+            v-model="seedInput"
+            placeholder="Leave empty for random"
+            :disabled="isPlaying"
+        >
+        <button @click="generateRandomSeed" :disabled="isPlaying" class="secondary-button">
+          Generate
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import {useGameStore} from "@/stores/gameStore.ts";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import type {Difficulty} from "@/types";
 
 const gameStore = useGameStore()
 
 // Game settings
 const selectedDifficulty = ref<Difficulty>('easy')
+const seedInput = ref('')
+
+// Get state from store
+const isPlaying = computed(() => gameStore.gameState === 'playing')
+
+// Generate a random seed
+const generateRandomSeed = () => {
+  seedInput.value = Math.random().toString(36).substring(2, 8)
+}
 </script>
 
 <style scoped>
