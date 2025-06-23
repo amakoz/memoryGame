@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
-import type { Card } from "@/types";
-import CanvasCard from "@/components/CanvasCard/CanvasCard.vue";
+import type { Card } from "../../types";
+import CanvasCard from "../../components/CanvasCard/CanvasCard.vue";
 
 // Mock canvas rendering context with all needed methods
 HTMLCanvasElement.prototype.getContext = vi.fn(() => ({

@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import GameBoard from "@/components/GameBoard/GameBoard.vue";
-import { useGameStore } from "@/stores/gameStore";
+import GameBoard from "../../components/GameBoard/GameBoard.vue";
+import { useGameStore } from "../../stores/gameStore";
 
 // Mock sound service
 const playSoundMock = vi.fn();
