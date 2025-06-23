@@ -1,23 +1,23 @@
 <template>
   <div class="game-controls">
     <div class="control-section">
-      <h2>Game Settings</h2>
+      <h2>{{ t("gameSettings") }}</h2>
       <div class="settings-group">
-        <label for="difficulty">Difficulty:</label>
+        <label for="difficulty">{{ t("difficulty.label") }}:</label>
         <select id="difficulty" v-model="selectedDifficulty">
-          <option value="easy">Easy (4x4)</option>
-          <option value="medium">Medium (4x6)</option>
-          <option value="hard">Hard (6x6)</option>
+          <option value="easy">{{ t("difficulty.easy") }} (4x4)</option>
+          <option value="medium">{{ t("difficulty.medium") }} (4x6)</option>
+          <option value="hard">{{ t("difficulty.hard") }} (6x6)</option>
         </select>
       </div>
 
       <div class="settings-group">
-        <label for="seed">Seed (optional):</label>
+        <label for="seed">{{ t("seed.label") }}:</label>
         <input
           id="seed"
           type="text"
           v-model="seedInput"
-          placeholder="Leave empty for random"
+          :placeholder="t('seed.placeholder')"
           :disabled="isPlaying"
         />
         <button
@@ -25,16 +25,16 @@
           :disabled="isPlaying"
           class="secondary-button"
         >
-          Generate
+          {{ t("seed.generate") }}
         </button>
       </div>
 
       <div class="button-group">
         <button v-if="!isPlaying" @click="startNewGame" class="primary-button">
-          New Game
+          {{ t("newGame") }}
         </button>
         <button v-else @click="resetGame" class="warning-button">
-          Restart
+          {{ t("restart") }}
         </button>
         <button
           @click="toggleSound"
@@ -42,24 +42,24 @@
           :class="{ 'sound-muted': soundMuted }"
         >
           <span class="sound-icon">{{ soundMuted ? "🔇" : "🔊" }}</span>
-          <span>Sound: {{ soundMuted ? "OFF" : "ON" }}</span>
+          <span>{{ t("sound") }}: {{ soundMuted ? t("off") : t("on") }}</span>
         </button>
       </div>
     </div>
 
     <div v-if="isPlaying || isCompleted" class="control-section">
-      <h2>Game Statistics</h2>
+      <h2>{{ t("stats.title") }}</h2>
       <div class="stats-container">
         <div class="stat-item">
-          <span class="stat-label">Moves:</span>
+          <span class="stat-label">{{ t("stats.moves") }}:</span>
           <span class="stat-value">{{ moveCount }}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-label">Time:</span>
+          <span class="stat-label">{{ t("stats.time") }}:</span>
           <span class="stat-value">{{ formattedTime }}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-label">Seed:</span>
+          <span class="stat-label">{{ t("stats.seed") }}:</span>
           <span class="stat-value">{{ currentSeed }}</span>
         </div>
       </div>
@@ -71,9 +71,11 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useGameStore } from "@/stores/gameStore";
 import { useSoundEffects } from "@/services/soundService";
+import { useI18n } from "vue-i18n";
 import type { Difficulty } from "@/types";
 import "./GameControls.css";
 
+const { t } = useI18n();
 const gameStore = useGameStore();
 const soundService = useSoundEffects();
 

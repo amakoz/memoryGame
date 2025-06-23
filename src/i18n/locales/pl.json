@@ -1,0 +1,41 @@
+{
+  "gameTitle": "Gra w pamięć",
+  "newGame": "Nowa gra",
+  "restart": "Restart",
+  "gameSettings": "Ustawienia gry",
+  "difficulty": {
+    "label": "Poziom trudności",
+    "easy": "Łatwy",
+    "medium": "Średni",
+    "hard": "Trudny"
+  },
+  "seed": {
+    "label": "Seed (opcjonalnie)",
+    "placeholder": "Zostaw puste dla losowego",
+    "generate": "Generuj"
+  },
+  "sound": "Dźwięk",
+  "on": "WŁ",
+  "off": "WYŁ",
+  "stats": {
+    "title": "Statystyki gry",
+    "moves": "Ruchy",
+    "matches": "Pary",
+    "time": "Czas",
+    "seed": "Seed"
+  },
+  "history": {
+    "title": "Historia gier",
+    "date": "Data",
+    "duration": "Czas trwania",
+    "result": "Wynik",
+    "difficulty": "Poziom trudności",
+    "noGames": "Brak rozegranych gier",
+    "replay": "Powtórz",
+    "clear": "Wyczyść historię"
+  },
+  "result": {
+    "win": "Wygrana",
+    "gameOver": "Koniec gry"
+  }
+}

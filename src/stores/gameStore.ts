@@ -317,6 +317,12 @@ export const useGameStore = defineStore("game", () => {
     moveCount.value = 0;
   }
 
+  // Helper to clear all history
+  const clearHistory = () => {
+    history.value = [];
+    saveHistory();
+  };
+
   // Initialize
   loadHistory();
 
@@ -346,5 +352,6 @@ export const useGameStore = defineStore("game", () => {
     resetGame,
     loadGameState,
     clearGameState,
+    clearHistory,
   };
 });

@@ -60,6 +60,10 @@ h2 {
   background-color: #3a57e8;
 }
 
+.clear-history-button {
+  margin-top: 20px;
+}
+
 /* Responsive styling */
 @media (max-width: 768px) {
   .game-history {

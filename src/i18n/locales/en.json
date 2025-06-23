@@ -1,0 +1,41 @@
+{
+  "gameTitle": "Memory Game",
+  "newGame": "New Game",
+  "restart": "Restart",
+  "gameSettings": "Game Settings",
+  "difficulty": {
+    "label": "Difficulty",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "seed": {
+    "label": "Seed (optional)",
+    "placeholder": "Leave empty for random",
+    "generate": "Generate"
+  },
+  "sound": "Sound",
+  "on": "ON",
+  "off": "OFF",
+  "stats": {
+    "title": "Game Statistics",
+    "moves": "Moves",
+    "matches": "Matches",
+    "time": "Time",
+    "seed": "Seed"
+  },
+  "history": {
+    "title": "Game History",
+    "date": "Date",
+    "duration": "Duration",
+    "result": "Result",
+    "difficulty": "Difficulty",
+    "noGames": "No games played yet",
+    "replay": "Replay",
+    "clear": "Clear History"
+  },
+  "result": {
+    "win": "Win",
+    "gameOver": "Game Over"
+  }
+}
