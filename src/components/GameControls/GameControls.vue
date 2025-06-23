@@ -174,6 +174,13 @@ onMounted(() => {
   // Listen to custom sound state change events
   document.addEventListener("sound-state-changed", updateSoundState);
 
+  // Listen for game replayed events from GameHistory component
+  document.addEventListener("game-replayed", () => {
+    console.log("Game replayed event received, starting timer");
+    elapsedTime.value = 0; // Reset elapsed time
+    startTimer();
+  });
+
   // Try to load saved game
   if (gameStore.loadGameState() && gameStore.gameState === "playing") {
     selectedDifficulty.value = gameStore.difficulty;
@@ -184,5 +191,6 @@ onMounted(() => {
 onUnmounted(() => {
   stopTimer();
   document.removeEventListener("sound-state-changed", updateSoundState);
+  document.removeEventListener("game-replayed", () => {});
 });
 </script>

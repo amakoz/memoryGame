@@ -79,5 +79,8 @@ const replayGame = (game: HistoryEntry) => {
   gameStore.resetGame();
   gameStore.initGame(game.difficulty, game.seed);
   gameStore.startGame();
+
+  // Dispatch a custom event to notify other components that a game has been replayed
+  document.dispatchEvent(new CustomEvent("game-replayed"));
 };
 </script>
